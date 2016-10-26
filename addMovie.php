@@ -1,92 +1,65 @@
-<!DOCTYPE HTML>  
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Add NEW Movie</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Movie Database</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+
 </head>
 
-<body>  
+<body>
 
-<?php
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.php">Movie Database</a>
+        </div>
+    </div>
+</nav>
 
-//db connection
-if(!empty($_GET['query'])) {
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li><a href="index.php">Overview</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><label class="tree-toggle nav-header">Input data</label></li>
+                <li><a href="addActorDirector.php">Add Actor/Director</a></li>
+                <li class="active"><a href="addMovie.php">Add Movie</a></li>
+                <li><a href="addComment.php">Add Comment</a></li>
+                <li><a href="addMovieActor.php">Add Actor to Movie</a></li>
+                <li><a href="addMovieDirector.php">Add Director to Movie</a></li>
+            </ul>
 
-  $db = new mysqli('localhost', 'cs143', '', 'CS143');
- // query "SELECT * FROM MaxMovieID;
- 
-  $query = "SELECT * FROM MaxMovieID";
- 
-  if($db->connect_errno > 0){
-      die('Unable to connect to database [' . $db->connect_error . ']');
-  }
+            <ul class="nav nav-sidebar">
+                <li><label class="tree-toggle nav-header">Browse data</label></li>
+                <li><a href="showActor.php">Show Actor</a></li>
+                <li><a href="showMovie.php">Show Movie</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><label class="tree-toggle nav-header">Search data</label></li>
+                <li><a href="search.php">Search</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Add Movie</h1>
+            
 
-    //return query result 
-    $rs = $db->query($query);
-    
 
-// define variables and set to empty values
-$title = $company = $year = $rating ="";
+        </div>
+    </div>
+</div>
+</div>
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $title = test_input($_POST["title"]);
-  $company = test_input($_POST["company"]);
-  $year = test_input($_POST["year"]);
-  $rating = test_input($_POST["rating"]);
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 
-}
- $row = $rs->fetch_assoc();
-    $id = $row['id'];
-    $nid = $id +1;
-    
-    $query1 = "INSERT INTO Movie VALUES($nid,$title,$year,$rating,$company)";
-    $db->query($query1);
-    
-    
-    $query2 = "UPDATE MaxMovieID SET id = $nid";
-    $db->query($query2);
-    $rs->free();
-    $db->close();
 
-function test_input($data) {
-  $data = trim($data); //Strip unnecessary characters
-  $data = stripslashes($data); //Remove backslashes
-  $data = htmlspecialchars($data);
-  return $data;
-}
-?>
-
-<h2>Add NEW Actor or Director</h2>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-  Title: <input type="text" name="title">
-  <br><br>
-  Company: <input type="text" name="company">
-  <br><br>
-  Year (yyyy-mm-dd):
-    <br> 
-    <input type="text" name="year">
-  <br><br>
-  Rating: <input type="text" name="rating">
-  <button type="submit" class="btn btn-primary">Submit</button>
- 
-</form>
-
-<?php
-echo "<h2>The Information You Added:</h2>";
-echo $title;
-echo "<br>";
-echo $company;
-echo "<br>";
-echo $year;
-echo "<br>";
-echo $rating;
-echo "<br>";
-?>
 
 </body>
 </html>
-

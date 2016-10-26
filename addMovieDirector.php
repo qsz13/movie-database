@@ -28,9 +28,9 @@
                 <li><label class="tree-toggle nav-header">Input data</label></li>
                 <li><a href="addActorDirector.php">Add Actor/Director</a></li>
                 <li><a href="addMovie.php">Add Movie</a></li>
-                <li class="active"><a href="addComment.php">Add Comment</a></li>
+                <li><a href="addComment.php">Add Comment</a></li>
                 <li><a href="addMovieActor.php">Add Actor to Movie</a></li>
-                <li><a href="addMovieDirector.php">Add Director to Movie</a></li>
+                <li class="active"><a href="addMovieDirector.php">Add Director to Movie</a></li>
             </ul>
 
             <ul class="nav nav-sidebar">
@@ -44,7 +44,7 @@
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Add Comment</h1>
+            <h1 class="page-header">Add Director to Movie</h1>
 
 
 
