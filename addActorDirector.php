@@ -115,43 +115,50 @@ function validateDate($date)
             </form>
             <?php }
             else  {
+                $db = new mysqli('localhost', 'cs143', '', 'CS143');
+                if ($db->connect_errno > 0) {
+                    die('Unable to connect to database [' . $db->connect_error . ']');
+                }
                 $role = $_POST["role"];
-                $firstname = trim($_POST["firstname"]);
-                $lastname = trim($_POST["lastname"]);
+                $firstname = $db->real_escape_string(trim($_POST["firstname"]));
+                $lastname = $db->real_escape_string(trim($_POST["lastname"]));
                 $sex = $_POST["sex"];
                 $dob = trim($_POST["dob"]);
                 $dod = trim($_POST["dod"]);
                 if($dod == "") $dod = NULL;
                 if($role=="") {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Please select <strong>Actor</strong> or <strong>Director</strong>.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
                 else if($firstname=="") {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>First Name</strong> is required.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
                 else if($lastname=="") {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Last Name</strong> is required.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
                 else if($role=="actor" and $sex=="") {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Please select <strong>Male</strong> or <strong>Female</strong>.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
                 else if($dob=="") {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Date of Birth</strong> is required.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
 
                 if(!validateDate($dod) || !validateDate($dob)){
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Date</strong> format is incorrect.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
 
-                $db = new mysqli('localhost', 'cs143', '', 'CS143');
-                if ($db->connect_errno > 0) {
-                    die('Unable to connect to database [' . $db->connect_error . ']');
-                }
+
 
                 $rs = $db->query("SELECT id FROM MaxPersonID");
                 $maxID = intval($rs->fetch_assoc()['id'])+1;
@@ -177,6 +184,7 @@ function validateDate($date)
                     if(!$success) $errormsg = $stmt->error;
                 } else {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Actor or Director</strong> is required.</div><a href='addActorDirector.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
                     return 0;
                 }
                 if(!$db->commit() || !$success){

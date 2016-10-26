@@ -5,6 +5,8 @@
     <title>Movie Database</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -45,7 +47,105 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Movie</h1>
-            
+            <?php if(empty($_POST)){ ?>
+            <form class="form-horizontal" action="#" method="post" >
+
+
+                <div class="form-group required">
+                    <label for="title" class="col-sm-2 control-label">Title</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="title" class="form-control" id="title" placeholder="Title">
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label for="company" class="col-sm-2 control-label">Company</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="company" class="form-control" id="company" placeholder="Company Name">
+                    </div>
+                </div>
+
+
+                <div class="form-group required">
+                    <label for="year" class="col-sm-2 control-label">Year</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="year" class="form-control" id="year" placeholder="1990">
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    <label for="rating" class="col-sm-2 control-label">MPAA Rating</label>
+                    <div class="col-sm-10">
+                        <select name="rating" id="rating" class="form-control">
+                            <option>G</option>
+                            <option>PG</option>
+                            <option>PG-13</option>
+                            <option>NC-17</option>
+                            <option>R</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    <label for="genre" class="col-sm-2 control-label">Genre</label>
+                    <div class="col-sm-10">
+                        <select name="genre[]" id="genre" class="selectpicker" multiple>
+                            <option>Action</option>
+                            <option>Adult</option>
+                            <option>Adventure</option>
+                            <option>Animation</option>
+                            <option>Comedy</option>
+                            <option>Crime</option>
+                            <option>Documentary</option>
+                            <option>Drama</option>
+                            <option>Family</option>
+                            <option>Fantasy</option>
+                            <option>Horror</option>
+                            <option>Musical</option>
+                            <option>Mystery</option>
+                            <option>Romance</option>
+                            <option>Sci-Fi</option>
+                            <option>Short</option>
+                            <option>Thriller</option>
+                            <option>War</option>
+                            <option>Western</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+            <?php }
+            else {
+
+                $db = new mysqli('localhost', 'cs143', '', 'CS143');
+                if ($db->connect_errno > 0) {
+                    die('Unable to connect to database [' . $db->connect_error . ']');
+                }
+                $title = $db->real_escape_string(trim($_POST["title"]));
+                $company = $db->real_escape_string(trim($_POST["company"]));
+                $year = intval($_POST["year"]);
+                $rating = $_POST["rating"];
+                $genres = $_POST["genre"];
+
+                if($title=="") {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Title</strong> is required.</div><a href='addMovie.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
+                    return 0;
+                } else if($company=="") {
+
+                }
+
+            }
+
+
+?>
 
 
         </div>
@@ -58,6 +158,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-select.min.js"></script>
 
 
 
