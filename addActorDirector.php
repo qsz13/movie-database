@@ -195,6 +195,7 @@ function validateDate($date)
                     <div class="alert alert-success" role="alert">
                         <p><strong>Well done!</strong> The <?php if($role == "actor"){echo "Actor";} else {echo "Director";}?> has been successfully added: </p>
                         <ul>
+                            <li>ID: <?php echo $maxID?></li>
                             <li>Name: <?php echo $firstname." ".$lastname?></li>
                             <?php if($role == "actor") echo "<li>Sex:".$sex."</li>"; ?>
                             <li>Date of Birth: <?php echo $dob ?></li>

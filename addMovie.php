@@ -139,9 +139,69 @@
                     $db->close();
                     return 0;
                 } else if($company=="") {
-
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Company</strong> is required.</div><a href='addMovie.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
+                    return 0;
+                } else if($year <1800 || $year > 2100) {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Year</strong> is incorrect.</div><a href='addMovie.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
+                    return 0;
+                } else if($rating ==""){
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4><strong>Rating</strong> is incorrect.</div><a href='addMovie.php'><button class='btn btn-danger'>Try again</button></a>";
+                    $db->close();
+                    return 0;
                 }
 
+                $rs = $db->query("SELECT id FROM MaxMovieID");
+                $maxID = intval($rs->fetch_assoc()['id'])+1;
+                $rs->free();
+                $db->autocommit(FALSE);
+                $success = true;
+                $errormsg = "";
+                $stmt = $db->prepare("INSERT INTO Movie (id, title, year, rating, company) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("issss", $maxID, $title, $year, $rating, $company);
+                $success = $stmt->execute();
+                if(!$success) $errormsg = $stmt->error;
+                $stmt->free_result();
+
+                $stmt = $db->prepare("UPDATE MaxMovieID SET id = id +1");
+                $success = $stmt->execute();
+                if(!$success) $errormsg = $stmt->error;
+                $stmt->free_result();
+
+
+                $stmt = $db->prepare("INSERT INTO MovieGenre (mid, genre) VALUES (?, ?)");
+                $stmt->bind_param("is", $maxID, $movie_genre);
+                foreach($genres as $g) {
+                    $movie_genre = $g;
+                    $success = $stmt->execute();
+                    if(!$success) $errormsg = $stmt->error;
+                }
+                if(!$db->commit() || !$success){
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>There is an error while inserting: " .$errormsg."</div>";
+                    $db->rollback();
+                } else {
+                    ?>
+
+                    <div class="alert alert-success" role="alert">
+                        <p><strong>Well done!</strong> The Movie has been successfully added: </p>
+                        <ul>
+                            <li>ID: <?php echo $maxID?></li>
+                            <li>Title: <?php echo $title?></li>
+                            <li>Year: <?php echo $year?></li>
+                            <li>Rating: <?php echo $rating?></li>
+                            <li>Company: <?php echo $company ?></li>
+                            <li>Genre: <?php
+                                foreach ($genres as $g) {
+                                    echo $g.", ";
+                                }
+                            ?></li>
+                        </ul>
+
+                    </div>
+                <?php }
+                $stmt->free_result();
+                $db->close();
             }
 
 
