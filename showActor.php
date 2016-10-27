@@ -120,12 +120,42 @@
                 if($statement->execute()) {
                     $statement->bind_result($aid, $last, $first, $sex, $dob, $dod);
                     $statement->fetch();
+                    $statement->free_result();
+
+                    $statement = $db->prepare("SELECT mid, title, role FROM MovieActor JOIN Movie ON MovieActor.mid = Movie.id where aid = ?");
+                    $statement->bind_param("s", $aid);
+                    $statement->bind_result($mid, $title, $role);
+                    $statement->execute();
+                    while ($statement->fetch()) {
+                        $movies[]=array('id'=> $mid, 'title'=>$title, 'role'=>$role);
+                    }
+
                     ?>
-                    <h1 class="page-header"><?php echo $first." ".$last?></h1>
-                    <p>Sex: <?php echo $sex?></p>
-                    <p>Date of Birth: <?php echo $dob?></p>
-                    <p>Date of Death: <?php echo $dod?> </p>
+                    <h1 class="page-header"><?php echo $first." ".$last?> <span class="small"><?php echo $dob?></span></h1>
+                    <p><strong>Sex</strong>: <?php echo $sex?></p>
+                    <p><strong>Date of Birth</strong>: <?php echo $dob?></p>
+                    <p><strong>Date of Death</strong>: <?php if($dod == NULL) echo "Still Alive"; else echo $dod?> </p>
+                    <p><strong>Movies</strong>:</p>
+                    <table class="table table-striped" style="width:60%">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach ($movies as $m) {
+                            echo "<tr><td><a href='showMovie.php?id=".$m["id"]."'>".$m["title"]."</a></td><td>".$m["role"]."</td></tr>";
+                        }
+                        ?>
+                        </tbody>
+
+
+                    </table>
+
                     <?php
+
                 }
                 else{
                     echo "There is an error while querying: " . $statement->error;
@@ -133,7 +163,7 @@
                     $db->close();
                 }
                 $statement->free_result();
-
+                $db->close();
 
             } ?>
 
