@@ -49,7 +49,7 @@
                 <div class="col-sm-10 col-sm-offset-1">
                     <form class="form-group" action="#" method="GET">
                         <div class="col-sm-8">
-                            <input name="query" type="search" placeholder="Actor Name" class="form-control">
+                            <input name="query" type="search" placeholder="Seach for Actor Name or Movie Name" class="form-control">
                         </div>
                         <div class="col-sm-2">
                             <input type="submit" class="btn btn-primary" value="Search">
