@@ -134,12 +134,32 @@
 
                     }
                     $statement->free_result();
+
                     $statement = $db->prepare("SELECT AVG(rating),COUNT(*) FROM Review WHERE mid = ?");
                     $statement->bind_param("s", $mid);
                     $statement->bind_result($avg_rating, $review_count);
                     $statement->execute();
                     $statement->fetch();
                     $statement->free_result();
+
+                    $statement = $db->prepare("SELECT CONCAT(first, \" \", last) FROM MovieDirector JOIN Director ON MovieDirector.did = Director.id where mid =  ?");
+                    $statement->bind_param("s", $mid);
+                    $statement->bind_result($director);
+                    $statement->execute();
+                    while ($statement->fetch()) {
+                        $directors[]=$director;
+                    }
+                    $statement->free_result();
+
+                    $statement = $db->prepare("SELECT aid, CONCAT(first, \" \", last), role FROM MovieActor JOIN Actor ON MovieActor.aid = Actor.id where mid = ?");
+                    $statement->bind_param("s", $mid);
+                    $statement->bind_result($aid, $name, $role);
+                    $statement->execute();
+                    while ($statement->fetch()) {
+                        $actors[]=array('id'=> $aid, 'name'=>$name, 'role'=>$role);
+                    }
+                    $statement->free_result();
+
 
                     ?>
                     <h1 class="page-header"><?php echo $title?>  <small>(<?php echo $year?>)</small></h1>
@@ -152,6 +172,34 @@
                     }
                         ?>
                     (<?php echo number_format($avg_rating, 2)?>/5)</p>
+                    <p><strong>Director</strong>: <?php
+                    $counter = 0;
+                    foreach($directors as $d){
+                        if($counter > 0) echo " / ";
+                        echo $d;
+                        $counter++;
+                    }
+                        ?></p>
+
+                    <p><strong>Actor</strong>:</p>
+                    <table class="table table-striped" style="width:60%">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                foreach ($actors as $a) {
+                                    echo "<tr><td><a href='showActor.php?id=".$a["id"]."'>".$a["name"]."</a></td><td>".$a["role"]."</td></tr>";
+                                }
+                            ?>
+                        </tbody>
+
+
+                    </table>
+
                     <h4 class="page-header">Comment</h4>
 
                     <form class="form-horizontal" action="addComment.php" method="post" >
