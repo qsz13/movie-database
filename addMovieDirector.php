@@ -113,10 +113,11 @@
                 }
 
                 $mid = $_POST["mid"];
-                $aid = $_POST["did"];
+                $did = $_POST["did"];
+
 
                 $stmt = $db->prepare("INSERT INTO MovieDirector (mid, did) VALUES (?, ?)");
-                $stmt->bind_param("ii", $mid, $aid);
+                $stmt->bind_param("ii", $mid, $did);
                 if($stmt->execute()) {
                     ?>
                     <div class="alert alert-success" role="alert">

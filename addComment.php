@@ -54,7 +54,7 @@
                 <div class="form-group required">
                     <label for="movie" class="col-sm-2 control-label">Title</label>
                     <div class="col-sm-10">
-                        <select id=movie name="mid" class="movie-select" style="width: 60%">
+                        <select id="movie" name="mid" class="movie-select" style="width: 60%">
                             <?php
                             $db = new mysqli('localhost', 'cs143', '', 'CS143');
                             if ($db->connect_errno > 0) {
@@ -68,6 +68,7 @@
                                 echo "<option value='".$mid."'>".$title."</option>";
                             }
                             $rs->free();
+                            $db->close();
                             ?>
                         </select>
                     </div>
@@ -116,8 +117,44 @@
             <?php }
 
             else {
+                $db = new mysqli('localhost', 'cs143', '', 'CS143');
+                if ($db->connect_errno > 0) {
+                    die('Unable to connect to database [' . $db->connect_error . ']');
+                }
+                $mid = $_POST["mid"];
 
+                $name = $db->real_escape_string(trim($_POST["name"]));
+                $rating = intval($_POST["rating"]);
+                $comment = $db->real_escape_string(trim($_POST["comment"]));
 
+                if($name=="") {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Please tell us your <strong>Name</strong>.</div><a href='showMovie.php?id=$mid'><button class='btn btn-danger'>Go to Movie</button></a>";
+                    $db->close();
+                    return 0;
+                } else if($comment=="") {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Please leave your <strong>Comment</strong>.</div><a href='showMovie.php?id=$mid'><button class='btn btn-danger'>Go to Movie</button></a>";
+                    $db->close();
+                    return 0;
+                } else if(strlen($comment)>500) {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Please limit your <strong>Comment</strong> in 500 characters.</div><a href='showMovie.php?id=$mid'><button class='btn btn-danger'>Go to Movie</button></a>";
+                    $db->close();
+                    return 0;
+                }
+
+                $stmt = $db->prepare("INSERT INTO Review(name, time, mid, rating, comment) VALUES (?, NOW(), ?, ?, ?)");
+                $stmt->bind_param("siis", $name, $mid, $rating, $comment);
+                if($stmt->execute()) {
+                    ?>
+                    <div class="alert alert-success" role="alert">
+                        <p><strong>Well done!</strong> The comment has been successfully added. </p>
+                    </div>
+                    <a href='showMovie.php?id=<?php echo $mid ?>'><button class='btn btn-success'>Back to Movie</button></a>
+                    <?php
+                } else {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Somthing went wrong: $stmt->error.</div><a href='showMovie.php?id=$mid'><button class='btn btn-danger'>Go to Movie</button></a>";
+                }
+                $db->close();
+                $stmt->free_result();
 
 
             }

@@ -106,7 +106,6 @@
                         echo "There is an error while querying: " . $statement->error;
                     }
                     $statement->free_result();
-                    $db->close();
                 }
 
             } else {
@@ -114,18 +113,144 @@
                 if ($db->connect_errno > 0) {
                     die('Unable to connect to database [' . $db->connect_error . ']');
                 }
-                $mid = $_GET['id'];
+                $mid = intval($_GET['id']);
+                if($mid<=0) {
+                    echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Movie id wrong.</div>";
+                    $db->close();
+                    return 0;
+                }
                 $statement = $db->prepare("SELECT * FROM Movie WHERE Movie.id = ?");
                 $statement->bind_param("s", $mid);
                 if($statement->execute()) {
                     $statement->bind_result($mid, $title, $year, $rating, $company);
                     $statement->fetch();
+                    $statement->free_result();
+                    $statement = $db->prepare("SELECT genre FROM MovieGenre WHERE mid = ?");
+                    $statement->bind_param("s",$mid);
+                    $statement->bind_result($genre);
+                    $statement->execute();
+                    while ($statement->fetch()) {
+                        $genres[]=$genre;
+
+                    }
+                    $statement->free_result();
+                    $statement = $db->prepare("SELECT AVG(rating),COUNT(*) FROM Review WHERE mid = ?");
+                    $statement->bind_param("s", $mid);
+                    $statement->bind_result($avg_rating, $review_count);
+                    $statement->execute();
+                    $statement->fetch();
+                    $statement->free_result();
+
                     ?>
                     <h1 class="page-header"><?php echo $title?>  <small>(<?php echo $year?>)</small></h1>
-                    <p>Title: <?php echo $title?></p>
-                    <p>Year: <?php echo $year?></p>
-                    <p>Rating: <?php echo $rating?> </p>
-                    <p>Produce Company: <?php echo $company?> </p>
+                    <h4><span class="label label-danger"><?php echo $rating?></span> | <?php foreach($genres as $g){echo "<span class=\"label label-default\">$g</span> ";}?> </h4>
+                    <p class="top20"><strong>Produce Company</strong>: <?php echo $company?> </p>
+                    <p><strong>Average Rating</strong>:
+                    <?php
+                    for ($i = 0; $i < intval($avg_rating); $i++){
+                        echo "<span class=\"glyphicon glyphicon-star\" style=\"color:#ffd700\" aria-hidden=\"true\"></span>";
+                    }
+                        ?>
+                    (<?php echo number_format($avg_rating, 2)?>/5)</p>
+                    <h4 class="page-header">Comment</h4>
+
+                    <form class="form-horizontal" action="addComment.php" method="post" >
+                        <input type="hidden" name="mid" value="<?php echo $mid ?>">
+                        <div class="form-group required">
+                            <label for="name" class="col-sm-2 control-label">Your Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="name" class="form-control" id="name" style="width: 60%">
+                            </div>
+                        </div>
+
+                        <div class="form-group required">
+                            <label for="rating" class="col-sm-2 control-label">Rating</label>
+                            <div class="col-sm-10">
+                                <select name="rating" id="rating" class="form-control"  style="width: 60%">
+                                    <option>5</option>
+                                    <option>4</option>
+                                    <option>3</option>
+                                    <option>2</option>
+                                    <option>1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group required">
+                            <label for="comment" class="col-sm-2 control-label">Comment</label>
+                            <div class="col-sm-10">
+                                <textarea name="comment" id="comment" class="form-control" rows="3" style="width: 60%" placeholder="Less than 500 characters."></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group required">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+
+
+
+                    </form>
+
+
+
+
+                    <?php
+                    $statement = $db->prepare("SELECT * FROM Review WHERE Review.mid = ?");
+                    $statement->bind_param("s", $mid);
+                    $statement->execute();
+                    if($statement->execute()) {
+                        $statement->bind_result($name, $time, $mid, $rating, $comment);
+                        $statement->store_result();
+                        if($statement->num_rows>0){
+
+
+                        ?>
+                <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading"><strong>All Comments</strong> <span class="badge"><?php echo $review_count?></span></div>
+
+                <!-- List group -->
+                <ul class="list-group">
+                        <?php
+                        while($statement->fetch()){
+                        ?>
+
+                            <li class="list-group-item">
+                                <p><strong><?php echo $name?></strong>
+                                <?php for ($i = 0; $i < $rating; $i++) {
+                                    echo "<span class=\"glyphicon glyphicon-star\" style=\"color:#ffd700\" aria-hidden=\"true\"></span>";
+                                }
+                                ?> <?php echo $time ?></p>
+                                <p><?php echo $comment?></p>
+
+                            </li>
+
+
+                            <?php
+
+                        }
+
+                        ?>
+
+                    </ul>
+                    </div>
+
+                    <?php
+                        }
+                    } else {
+                        echo "There is an error getting comments: " . $statement->error;
+
+                    }
+
+                    ?>
+
+
+
+
+
                     <?php
                 }
                 else{
