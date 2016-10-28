@@ -47,9 +47,10 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Overview</h1>
           <div class="jumbotron">
-            <h1>Hi,</h1>
+            <h1>Hi, : )</h1>
             <p>This is the CS 143 Movie Database Management System</p>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+            <p>Developed by: Shangzhao Qiu & Yan Yan</p>
+            
           </div>
 
 
