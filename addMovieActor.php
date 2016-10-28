@@ -112,12 +112,14 @@
                 $role = $db->real_escape_string(trim($_POST["role"]));
 
                 $stmt = $db->prepare("INSERT INTO MovieActor (mid, aid, role) VALUES (?, ?, ?)");
-                $stmt->bind_param("iis", $mid, $aid, $role);
+                $stmt->bind_param("sss", $mid, $aid, $role);
                 if($stmt->execute()) {
                     ?>
                     <div class="alert alert-success" role="alert">
                         <p><strong>Well done!</strong> The Movie Actor has been successfully added. </p>
                     </div>
+                     <a href="showMovie.php?id=<?php echo $mid ?>"><button class="btn btn-success">Go to Movie</button></a>
+
 <?php
                 } else {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Somthing went wrong: $stmt->error.</div>";

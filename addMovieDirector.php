@@ -78,7 +78,7 @@
                     <div class="form-group required">
                         <label for="director" class="col-sm-2 control-label">Director</label>
                         <div class="col-sm-10">
-                            <select id="director" name="aid" class="director-select" style="width: 60%">
+                            <select id="director" name="did" class="director-select" style="width: 60%">
                                 <?php
                                 $rs = $db->query("SELECT * FROM Director");
                                 $rs->fetch_assoc();
@@ -112,8 +112,8 @@
                     die('Unable to connect to database [' . $db->connect_error . ']');
                 }
 
-                $mid = $_POST["mid"];
-                $did = $_POST["did"];
+                $mid = intval($_POST["mid"]);
+                $did = intval($_POST["did"]);
 
 
                 $stmt = $db->prepare("INSERT INTO MovieDirector (mid, did) VALUES (?, ?)");
@@ -123,6 +123,7 @@
                     <div class="alert alert-success" role="alert">
                         <p><strong>Well done!</strong> The Movie Director has been successfully added. </p>
                     </div>
+                    <a href="showMovie.php?id=<?php echo $mid ?>"><button class="btn btn-success">Go to Movie</button></a>
                     <?php
                 } else {
                     echo "<div class='alert alert-danger' role='alert'><h4>You got an error!</h4>Somthing went wrong: $stmt->error.</div>";
