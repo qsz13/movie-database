@@ -10,7 +10,7 @@ if(isset($_GET['term'])) {
     $statement->bind_param("s", $term);
     $statement->execute();
     $statement->store_result();
-    $statement->bind_result($aid, $first, $last);
+    $statement->bind_result($aid, $last, $first);
     while ($statement->fetch()) {
         $output[]=array('id'=>$aid,'text'=>$first.' '.$last);
     }

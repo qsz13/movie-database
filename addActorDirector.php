@@ -176,7 +176,7 @@ function validateDate($date)
                     if(!$success) $errormsg = $stmt->error;
                 } else if($role == "director") {
                     $stmt = $db->prepare("INSERT INTO Director (id, last, first, dob, dod) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("isssss", $maxID, $lastname, $firstname, $dob, $dod);
+                    $stmt->bind_param("issss", $maxID, $lastname, $firstname, $dob, $dod);
                     $success = $stmt->execute();
                     if(!$success) $errormsg = $stmt->error;
                     $stmt = $db->prepare("UPDATE MaxPersonID SET id = id +1");
