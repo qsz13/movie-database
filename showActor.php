@@ -70,7 +70,7 @@
                     }
                     $query = trim($_GET['query']);
                     $query = implode(" ", preg_split('/\s+/', $query));
-                    $statement = $db->prepare("SELECT id, last, first FROM Actor WHERE CONCAT(Actor.first, ' ', Actor.last) LIKE ?");
+                    $statement = $db->prepare("SELECT id, last, first, dob FROM Actor WHERE CONCAT(Actor.first, ' ', Actor.last) LIKE ?");
                     $search_keyword = "%".$db->real_escape_string($query)."%";
 
 
@@ -81,20 +81,21 @@
                         ?>
                         <p class="top20">Get <?php echo $row_num ?> results.</p>
                         <?php
-                        $statement->bind_result($aid, $last, $first);
+                        $statement->bind_result($aid, $last, $first, $dob);
                         if($row_num > 0){?>
 
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Title</th>
+                                    <th>Name</th>
+                                    <th>Birthday</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php
                                 while ($statement->fetch()) {
-                                    echo "<tr><td>".$aid."</td><td><a href='showActor.php?id=".$aid."'>".$first." ".$last."</a></td></tr>";
+                                    echo "<tr><td>$aid</td><td><a href='showActor.php?id=$aid'>$first $last</a></td><td>$dob</td></tr>";
                                 }
                                 ?>
                                 </tbody>

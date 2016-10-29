@@ -102,7 +102,7 @@
                     echo "There is an error while querying: " . $statement->error;
                     $statement->free_result();
                 }
-                $statement = $db->prepare("SELECT id, last, first FROM Actor WHERE CONCAT(Actor.first, ' ', Actor.last) LIKE ?");
+                $statement = $db->prepare("SELECT id, last, first, dob FROM Actor WHERE CONCAT(Actor.first, ' ', Actor.last) LIKE ?");
                 $search_keyword = "%".$db->real_escape_string($query)."%";
                 $statement->bind_param("s", $search_keyword);
                 if ($statement->execute()) {
@@ -111,20 +111,21 @@
                     ?>
                     <h5 class="top20">Get <?php echo $row_num ?> results for actors:</h5>
                     <?php
-                    $statement->bind_result($aid, $last, $first);
+                    $statement->bind_result($aid, $last, $first, $dob);
                     if($row_num > 0){?>
 
                         <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Title</th>
+                                <th>Name</th>
+                                <th>Birthday</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php
                             while ($statement->fetch()) {
-                                echo "<tr><td>".$aid."</td><td><a href='showActor.php?id=".$aid."'>".$first." ".$last."</a></td></tr>";
+                                echo "<tr><td>$aid</td><td><a href='showActor.php?id=$aid'>$first $last</a></td><td>$dob</td></tr>";
                             }
                             ?>
                             </tbody>
